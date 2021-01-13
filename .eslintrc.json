@@ -1,0 +1,10 @@
+{
+	"extends": [
+		"wikimedia/vue-common", 
+		"wikimedia/language/es2019"
+	] ,
+	"parserOptions": {
+		"sourceType": "module",
+		"allowImportExportEverywhere": true
+	  }
+}
