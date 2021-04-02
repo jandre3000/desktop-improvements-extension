@@ -2,24 +2,24 @@
 	<form>
 		<h1>Wikipedia Prototypes</h1>
 		<div class="row"
-			@mouseover="setActiveOption('dip')"
+			@mouseover="setActiveOption('modernMode')"
 			@mouseleave="setActiveOption">
 			<label class="label--large" for="modern-look">Modern look </label>
-			<InputSwitch id="modern-look" v-model="options.dip.value" />
+			<InputSwitch id="modern-look" v-model="userPreferences.modernMode.value" />
 		</div>
 
 		<div class="row-indented"
-			@mouseover="setActiveOption('dipHeader')"
+			@mouseover="setActiveOption('stickyHeader')"
 			@mouseleave="setActiveOption">
 			<label class="label">Scrolling header</label>
-			<Checkbox v-model="options.dipHeader.value" :binary="true" />
+			<Checkbox v-model="userPreferences.stickyHeader.value" :binary="true" />
 		</div>
 
 		<div class="row-indented"
 			@mouseover="setActiveOption('dipToc')"
 			@mouseleave="setActiveOption">
 			<label class="label">Compact user menu</label>
-			<Checkbox v-model="options.dipUserMenu.value" :binary="true" />
+			<Checkbox v-model="userPreferences.compactUserMenu.value" :binary="true" />
 		</div>
 
 		<div class="
@@ -34,7 +34,7 @@
 			@mouseover="setActiveOption('dipToc')"
 			@mouseleave="setActiveOption">
 			<label class="label">Table of Contents</label>
-			<Checkbox v-model="options.dipToc.value" :binary="true" />
+			<Checkbox v-model="userPreferences.dipToc.value" :binary="true" />
 		</div>
 
 		<div class="row-indented"
@@ -67,9 +67,9 @@
 			</template>
 			<template #content>
 				<pre>
-{{ JSON.stringify( options, null, '\t' ) }}
+{{ JSON.stringify( userPreferences, null, '\t' ) }}
 			</pre>
-				{{ optionsDescriptions[activeOption] }}
+				{{ preferencesDescriptions[activeOption] }}
 			</template>
 		</Card>
 	</form>
@@ -81,7 +81,7 @@ import InputSwitch from 'primevue/inputswitch';
 import Checkbox from 'primevue/checkbox';
 import Card from 'primevue/card';
 import Slider from 'primevue/slider';
-import { defaultOptions } from '@app/scripts/constants.js';
+import { defaultUserPreferences } from '@app/scripts/constants.js';
 
 export default {
 	components: {
@@ -92,13 +92,13 @@ export default {
 	},
 	setup() {
 
-		const options = reactive( defaultOptions );
+		const userPreferences = reactive( defaultUserPreferences );
 
-		const optionsDescriptions = {
-			dip: 'Enable the modern version of the Vector skin, as defined by the <a href="#">Desktop Improvements Project</a>.',
+		const preferencesDescriptions = {
+			modernMode: 'Enable the modern version of the Vector skin, as defined by the <a href="#">Desktop Improvements Project</a>.',
 			dipToc: 'Table of contents',
 			dipLanguageSwitcher: 'A language switcher placed near the page header instead of the inside the sidebar.',
-			dipHeader: 'Extra sticky',
+			stickyHeader: 'Extra sticky',
 			dipLineLength: 'Adjust the width of the content in modern mode.',
 			darkMode: 'Enable dark mode.',
 			darkModeSystem: 'Enable dark mode based on system preferences. Works on Mac or Windows or something.'
@@ -106,23 +106,23 @@ export default {
 
 		const activeOption = ref( '' );
 
-		function saveOptionsOnChange() {
-			watch( options, function ( val ) {
-				browser.storage.local.set( { options: val } );
+		function savePreferencesOnChange() {
+			watch( userPreferences, function ( val ) {
+				browser.storage.local.set( { userPreferences: val } );
 			} );
 		}
 
-		function setActiveOption( option ) {
-			activeOption.value = optionsDescriptions[ option ] ? option : '';
+		function setActiveOption( pref ) {
+			activeOption.value = preferencesDescriptions[ pref ] ? pref : '';
 		}
 
-		browser.storage.local.get( 'options' )
-			.then( ( storedOptions ) => {
-				Object.assign( options, storedOptions.options );
+		browser.storage.local.get( 'userPreferences' )
+			.then( ( storage ) => {
+				Object.assign( userPreferences, storage.userPreferences );
 			} )
-			.then( saveOptionsOnChange );
+			.then( savePreferencesOnChange );
 
-		return { options, optionsDescriptions, activeOption, setActiveOption };
+		return { userPreferences, preferencesDescriptions, activeOption, setActiveOption };
 	}
 };
 </script>

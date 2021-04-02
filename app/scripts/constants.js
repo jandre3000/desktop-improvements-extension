@@ -1,7 +1,7 @@
-export const defaultOptions = {
-    dip:                { value: false }, 
-    dipHeader:          { value: false },
-    dipUserMenu:        { value: false },
+export const defaultUserPreferences = {
+    modernMode:         { value: false },
+    stickyHeader:       { value: false },
+    compactUserMenu:    { value: false },
     dipLanguageSwitcher:{ value: false },
     dipToc:             { value: false },
     dipLineLength:      { value: false },
@@ -9,15 +9,15 @@ export const defaultOptions = {
     darkModeSystem:     { value: false }
 }
 
-export const webRequestFilters = { 
+export const webRequestFilters = {
     urls: [
         "https://*.wikipedia.org/wiki/*",
         "https://*.wikipedia.org/w/index.php*"
-    ] 
+    ]
 };
 
-export const webNavigationFilters = { 
-    url: [ 
-        { hostContains: "wikipedia.org" } 
-    ] 
+export const webNavigationFilters = {
+    url: [
+        { hostContains: "wikipedia.org" }
+    ]
 };

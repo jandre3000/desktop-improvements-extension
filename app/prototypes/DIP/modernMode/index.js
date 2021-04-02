@@ -1,11 +1,11 @@
 /**
- * This script is loaded when the extension is installed and 
+ * This script is loaded when the extension is installed and
  * runs continuously in the background while the browser is open.
  */
 
 import { webRequestFilters } from "@app/scripts/constants.js";
 
-function modernModeChangeHandler( requestDetails ) {
+function init( requestDetails ) {
     const requestUrl = new URL(requestDetails.url);
 
     if ( !requestUrl.searchParams.has('useskinversion') ) {
@@ -16,36 +16,35 @@ function modernModeChangeHandler( requestDetails ) {
     }
 }
 
-export function enableModernMode() {
-    
-    if ( !browser.webRequest.onBeforeRequest.hasListener(modernModeChangeHandler) ) {
-        
-        browser.webRequest.onBeforeRequest.addListener(
-            modernModeChangeHandler,
-            webRequestFilters,
-            ["blocking"]
-        ); 
+export function enable() {
 
+    if ( browser.webRequest.onBeforeRequest.hasListener(init) ) {
+        return false;
     }
 
-    return 1;
+    browser.webRequest.onBeforeRequest.addListener(
+        init,
+        webRequestFilters,
+        ["blocking"]
+    );
+
+    return true;
 }
 
-export function disableModernMode() {
-    if ( browser.webRequest.onBeforeRequest.hasListener( modernModeChangeHandler ) ) {
-        browser.webRequest.onBeforeRequest.removeListener( modernModeChangeHandler )
-        browser.tabs.executeScript( 
+export function disable() {
+    if ( browser.webRequest.onBeforeRequest.hasListener( init ) ) {
+        browser.webRequest.onBeforeRequest.removeListener( init )
+        browser.tabs.executeScript(
             {
                 code: `
                 (function () {
                     let u = new URL( window.location.toString() );
                     u.searchParams.delete( 'useskinversion' );
                     window.location.replace( u.toString() );
-                })();
-                `
+                })();`
             })
     }
-
-    return 0;
-    
+    return false;
 }
+
+export default { userPreferenceName: 'modernMode', enable, disable };

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Enables the Desktop Improvements project for anonynmous users on Wikipedia.",
   "scripts": {
-    "dev": "webextension-toolbox dev chrome",
+    "start": "webextension-toolbox dev chrome",
     "build": "webextension-toolbox build chrome",
     "lint": "eslint --max-warnings 0  app/**/**.js"
   },

@@ -1,32 +1,34 @@
 /**
- * This script is loaded when the extension is installed and 
+ * This script is loaded when the extension is installed and
  * runs continuously in the background while the browser is open.
  */
 
-import { enableModernMode, disableModernMode } from '@app/prototypes/DIP/modernMode/index.js';
-import { enableDipHeader, disableDipHeader } from '@app/prototypes/DIP/stickyHeader/index.js';
-import { enableDipUserMenu, disableDipUserMenu } from '@app/prototypes/DIP/compactUserMenu/index.js';
+import modernMode from '@app/prototypes/DIP/modernMode';
+import stickyHeader from '@app/prototypes/DIP/stickyHeader';
+import compactUserMenu from '@app/prototypes/DIP/compactUserMenu';
+import { defaultUserPreferences } from '@app/scripts/constants.js';
 
-import { defaultOptions } from '@app/scripts/constants.js';
+const prototypes = [ modernMode, stickyHeader, compactUserMenu]
 
-function init() {    
-    browser.storage.local.get( 'options' )
-    .then( ( { options } ) => {
-        
-        let reloadBrowser = 0;
-        
-        reloadBrowser += ( options.dip.value ) ? enableModernMode() : disableModernMode();
-        reloadBrowser += ( options.dipHeader.value ) ? enableDipHeader() : disableDipHeader();
-        reloadBrowser += ( options.dipUserMenu.value ) ? enableDipUserMenu() : disableDipUserMenu();
-        
-        if ( reloadBrowser > 0 ) { 
-            browser.tabs.reload() 
+function init() {
+    browser.storage.local.get( 'userPreferences' )
+    .then( ( { userPreferences } ) => {
+
+        const reloadBrowser = prototypes.reduce( ( r, prototype ) => {
+            const name = prototype.userPreferenceName;
+            return r += userPreferences[ name ].value
+                ? Number( prototype.enable() )
+                : Number( prototype.disable() )
+        }, 0 )
+
+        if ( reloadBrowser > 0 ) {
+            browser.tabs.reload()
         }
-    }) 
+    })
 }
 
 async function installExtension() {
-    await browser.storage.local.set( { options: defaultOptions } );
+    await browser.storage.local.set( { userPreferences: defaultUserPreferences } );
     init();
 }
 

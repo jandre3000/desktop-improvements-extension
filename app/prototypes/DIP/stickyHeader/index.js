@@ -1,36 +1,39 @@
 /**
- * This script is loaded when the extension is installed and 
+ * This script is loaded when the extension is installed and
  * runs continuously in the background while the browser is open.
  */
 
 import { webNavigationFilters } from "@app/scripts/constants.js";
 
-function enableDipHeaderHandler() {
+function init() {
     browser.tabs.executeScript( {
-        file: '/prototypes/DIP/stickyHeader/app.js', 
+        file: '/prototypes/DIP/stickyHeader/app.js',
         runAt: "document_end"
     } )
     browser.tabs.insertCSS( {
-        file: '/prototypes/DIP/stickyHeader/app.css', 
+        file: '/prototypes/DIP/stickyHeader/app.css',
         runAt: "document_start"
     } )
 }
 
-export function enableDipHeader() {
-    if ( !browser.webNavigation.onCommitted.hasListener(enableDipHeaderHandler) ) {
-        browser.webNavigation.onCommitted.addListener( 
-            enableDipHeaderHandler, 
-            webNavigationFilters
-        )
-        return 1;
+function enable() {
+    if ( browser.webNavigation.onCommitted.hasListener(init) ) {
+        return false;
     }
-    return 0;
+
+    browser.webNavigation.onCommitted.addListener(
+        init,
+        webNavigationFilters
+    )
+    return true;
 }
 
-export function disableDipHeader() {
-    if ( browser.webNavigation.onCommitted.hasListener(enableDipHeaderHandler) ) {
-        browser.webNavigation.onCommitted.removeListener( enableDipHeaderHandler )
-        return 1;
+function disable() {
+    if ( browser.webNavigation.onCommitted.hasListener(init) ) {
+        browser.webNavigation.onCommitted.removeListener( init )
+        return true;
     }
-    return 0;
+    return false;
 }
+
+export default { userPreferenceName: 'stickyHeader', enable, disable }

@@ -1,32 +1,34 @@
 
 import { webNavigationFilters } from "@app/scripts/constants.js";
 
-function enableDipUserMenuHandler() {
+function init() {
     browser.tabs.executeScript( {
-        file: '/prototypes/DIP/compactUserMenu/app.js', 
+        file: '/prototypes/DIP/compactUserMenu/app.js',
         runAt: "document_end"
     } )
     browser.tabs.insertCSS( {
-        file: '/prototypes/DIP/compactUserMenu/app.css', 
+        file: '/prototypes/DIP/compactUserMenu/app.css',
         runAt: "document_start"
     } )
-    .catch( (err) => alert(  err.message ))
+    .catch( (err) => alert(  err.message ) )
 }
 
-export function enableDipUserMenu() {
-    if ( !browser.webNavigation.onCommitted.hasListener( enableDipUserMenuHandler ) ) {
-        browser.webNavigation.onCommitted.addListener( 
-            enableDipUserMenuHandler, 
-            webNavigationFilters )
-        return 1;
+function enable() {
+    if ( browser.webNavigation.onCommitted.hasListener( init ) ) {
+        return false;
     }
-    return 0;
+    browser.webNavigation.onCommitted.addListener(
+        init,
+        webNavigationFilters )
+    return true;
 }
 
-export function disableDipUserMenu() {
-    if ( browser.webNavigation.onCommitted.hasListener( enableDipUserMenuHandler ) ) {
-        browser.webNavigation.onCommitted.removeListener( enableDipUserMenuHandler )
-        return 1;
+function disable() {
+    if ( browser.webNavigation.onCommitted.hasListener( init ) ) {
+        browser.webNavigation.onCommitted.removeListener( init )
+        return true;
     }
-    return 0;
+    return false;
 }
+
+export default { userPreferenceName: 'compactUserMenu', enable, disable }
