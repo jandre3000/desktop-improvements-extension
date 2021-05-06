@@ -51,7 +51,7 @@
 			@mouseover="setActiveOption('darkMode')"
 			@mouseleave="setActiveOption">
 			<label class="label--large">Dark Mode</label>
-			<InputSwitch />
+			<InputSwitch v-model="userPreferences.darkMode.value" :binary="true" />
 		</div>
 
 		<div class="row-indented"

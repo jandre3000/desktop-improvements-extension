@@ -6,9 +6,10 @@
 import modernMode from '@app/prototypes/DIP/modernMode';
 import stickyHeader from '@app/prototypes/DIP/stickyHeader';
 import compactUserMenu from '@app/prototypes/DIP/compactUserMenu';
+import darkMode from '@app/prototypes/darkMode';
 import { defaultUserPreferences } from '@app/scripts/constants.js';
 
-const prototypes = [ modernMode, stickyHeader, compactUserMenu]
+const prototypes = [ modernMode, stickyHeader, compactUserMenu, darkMode ]
 
 function init() {
     browser.storage.local.get( 'userPreferences' )
