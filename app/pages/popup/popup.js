@@ -7,6 +7,10 @@ import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 
-const app = createApp(App)
+const app = createApp(App);
+
+const mountElement = window.document.createElement( 'div' );
+document.body.appendChild( mountElement );
+
 app.use(PrimeVue);
-app.mount('#app')
+app.mount(mountElement)

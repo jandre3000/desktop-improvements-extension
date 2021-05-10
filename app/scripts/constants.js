@@ -9,6 +9,10 @@ export const defaultUserPreferences = {
     darkModeSystem:     { value: false }
 }
 
+export const defaultUIOptions = {
+    visible: { value: false }
+}
+
 export const webRequestFilters = {
     urls: [
         "https://*.wikipedia.org/wiki/*",

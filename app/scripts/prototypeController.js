@@ -7,7 +7,7 @@ import modernMode from '@app/prototypes/DIP/modernMode';
 import stickyHeader from '@app/prototypes/DIP/stickyHeader';
 import compactUserMenu from '@app/prototypes/DIP/compactUserMenu';
 import darkMode from '@app/prototypes/darkMode';
-import { defaultUserPreferences } from '@app/scripts/constants.js';
+import { defaultUserPreferences, defaultUIOptions } from '@app/scripts/constants.js';
 
 const prototypes = [ modernMode, stickyHeader, compactUserMenu, darkMode ]
 
@@ -30,6 +30,7 @@ function init() {
 
 async function installExtension() {
     await browser.storage.local.set( { userPreferences: defaultUserPreferences } );
+    await browser.storage.local.set( { uiOptions: defaultUIOptions } );
     init();
 }
 
