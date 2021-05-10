@@ -23,7 +23,10 @@
 <script>
 export default {
 	props: {
-		oldDom: {}
+		oldDom: {
+			type: Object,
+			default: () => { return {}; }
+		}
 	},
 	data() {
 		return {

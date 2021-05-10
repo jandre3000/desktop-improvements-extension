@@ -1,10 +1,13 @@
 {
 	"extends": [
-		"wikimedia/vue-common", 
+		"wikimedia/vue-es6",
 		"wikimedia/language/es2019"
-	] ,
+	],
+	"globals": {
+        "browser": "readonly"
+    },
 	"parserOptions": {
 		"sourceType": "module",
 		"allowImportExportEverywhere": true
-	  }
+	}
 }
