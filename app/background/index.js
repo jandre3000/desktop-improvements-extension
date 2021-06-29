@@ -3,13 +3,14 @@
  * runs continuously in the background while the browser is open.
  */
 
-import modernMode from '@app/prototypes/DIP/modernMode';
-import stickyHeader from '@app/prototypes/DIP/stickyHeader';
-import compactUserMenu from '@app/prototypes/DIP/compactUserMenu';
-import darkMode from '@app/prototypes/darkMode';
-import { defaultUserPreferences, defaultUIOptions } from '@app/scripts/constants.js';
+import { defaultUserPreferences, defaultUIOptions } from './constants.js';
+import modernMode from './prototypeControllers/modernModeController.js';
+import stickyHeader from './prototypeControllers/stickyHeaderController.js';
+import compactUserMenu from  './prototypeControllers/compactUserMenuController.js';
+import darkMode from './prototypeControllers/darkModeController.js';
+import languageInHeader from './prototypeControllers/languageInHeaderController';
 
-const prototypes = [ modernMode, stickyHeader, compactUserMenu, darkMode ]
+const prototypes = [ languageInHeader, modernMode, stickyHeader, compactUserMenu, darkMode ];
 
 function init() {
     browser.storage.local.get( 'userPreferences' )

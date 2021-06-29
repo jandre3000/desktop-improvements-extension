@@ -1,21 +1,20 @@
 
-import { webNavigationFilters } from "@app/scripts/constants.js";
-
 function init() {
+    browser.tabs.executeScript( {
+        file: '/content/prototypes/compactUserLinks/app.js',
+        runAt: "document_end"
+    } )
     browser.tabs.insertCSS( {
-        file: '/prototypes/darkMode/darkMode.css',
+        file: '/content/prototypes/compactUserLinks/userLinks.css',
         runAt: "document_start"
     } )
-    .catch( (err) => alert(  err.message ) )
 }
 
 function enable() {
     if ( browser.webNavigation.onCommitted.hasListener( init ) ) {
         return false;
     }
-    browser.webNavigation.onCommitted.addListener(
-        init,
-        webNavigationFilters )
+    browser.webNavigation.onCommitted.addListener( init )
     return true;
 }
 
@@ -27,4 +26,4 @@ function disable() {
     return false;
 }
 
-export default { userPreferenceName: 'darkMode', enable, disable }
+export default { userPreferenceName: 'compactUserMenu', enable, disable }

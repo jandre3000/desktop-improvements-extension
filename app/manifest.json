@@ -9,26 +9,37 @@
     "16": "images/icons/icon-16.png",
     "128": "images/icons/icon-128.png"
   },
-  "web_accessible_resources": ["images/*.svg"],
+  "web_accessible_resources": ["images/**/*.svg", "images/**/*.png"],
   "browser_action": {
     "default_icon": {
       "19": "images/icons/icon-19.png",
       "38": "images/icons/icon-38.png"
     },
-    "default_title": "__MSG_browserActionTitle__",
-    "default_popup": "pages/popup/popup.html"
+    "default_title": "__MSG_browserActionTitle__"
   },
   "content_scripts": [
-     {
-     "matches": [ "https://*.wikipedia.org/*" ],
-     "js": [ "pages/popup/popup.js" ],
-     "css": [ "pages/popup/popup.css" ]
+    {
+      "js": ["content/popup/popup.js"],
+      "css": ["content/popup/popup.css"],
+      "matches": [
+        "https://*.wikipedia.org/*",
+        "https://commons.wikimedia.org/*",
+        "https://*.wikibooks.org/*",
+        "https://*.wikiversity.org/*",
+        "https://*.wikivoyage.org/*",
+        "https://*.wikinews.org/*",
+        "https://*.wikiquote.org/*",
+        "https://*.wiktionary.org/*",
+        "https://www.wikidata.org/*",
+        "https://www.mediawiki.org/*",
+        "https://office.wikimedia.org/*"
+      ]
     }
   ],
 
   "background": {
     "scripts": [
-      "scripts/prototypeController.js"
+      "background/index.js"
     ]
   },
   "permissions": [
@@ -39,6 +50,16 @@
     "webNavigation",
     "webRequest",
     "webRequestBlocking",
-    "https://*.wikipedia.org/*"
+    "https://*.wikipedia.org/*",
+    "https://commons.wikimedia.org/*",
+    "https://*.wikibooks.org/*",
+    "https://*.wikiversity.org/*",
+    "https://*.wikivoyage.org/*",
+    "https://*.wikinews.org/*",
+    "https://*.wikiquote.org/*",
+    "https://*.wiktionary.org/*",
+    "https://www.wikidata.org/*",
+    "https://www.mediawiki.org/*",
+    "https://office.wikimedia.org/*"
   ]
 }

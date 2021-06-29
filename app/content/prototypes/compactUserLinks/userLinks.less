@@ -1,0 +1,151 @@
+@import 'variables.less';
+
+.vector-user-links {
+	display: flex;
+	align-items: center;
+	height: 30px;
+	position: relative;
+	flex-grow: 1;
+	justify-content: flex-end;
+	margin-bottom: 2em;
+
+	.vector-menu-content-list {
+		flex-wrap: wrap;
+		justify-content: flex-end;
+
+		#ca-userpage {
+			display: none;
+		}
+
+		#ca-talk-alert {
+			font-size: 12px;
+			position: absolute;
+			top: calc( 100% + 12px );
+			right: 0;
+			white-space: nowrap;
+		}
+	}
+
+	.vector-user-menu-more {
+		.vector-menu-content-list {
+			display: flex;
+			align-items: center;
+		}
+
+		// TODO: replace with class
+		#ca-uls {
+			padding-top: 0;
+
+			a {
+				font-size: 0.75em;
+			}
+		}
+
+		// TODO: replace with class
+		#ca-userpage {
+			padding-top: 0;
+			margin-left: 1em;
+
+			a {
+				background-position: left center;
+				color: #000;
+				text-decoration: none;
+			}
+		}
+
+		.vector-user-links-createaccount {
+			padding-top: 0;
+		}
+	}
+
+	// Overrides personal menu styles for consolidated user links.
+	.vector-user-menu {
+		margin: 0 0 0 12px;
+		height: 100%;
+
+		h3 {
+			height: 100%;
+			min-width: 48px;
+			// Override background size from common/components/UserLinks.less
+			// stylelint-disable-next-line declaration-no-important
+			background-size: auto !important;
+			background-position: 25%;
+
+			&:after {
+				background-position: 100% 0%;
+			}
+		}
+
+		.vector-menu-checkbox {
+			&:hover + h3 {
+				background-color: @colorGray14;
+				border-radius: @border-radius-base;
+			}
+		}
+
+		.vector-menu-content {
+			min-width: 200px;
+			top: 100%;
+			left: unset;
+			right: 0;
+			border-top-width: 1px;
+		}
+
+		.vector-menu-content-list {
+			li {
+				// FIXME: the following font-size rule is for cached HTML. It can be removed when
+				// I068c5233bb25a7b141e66a6726b5761841f83eb2 is in production.
+				// stylelint-disable-next-line declaration-no-important
+				font-size: 100% !important;
+				width: 100%;
+				margin: 0;
+
+				&:hover {
+					background-color: @background-color-secondary;
+				}
+			}
+
+			a {
+				display: block;
+				color: #000;
+				text-decoration: none;
+			}
+		}
+
+		// Copied from https://github.com/wikimedia/Vector/blob/master/resources/common/components/MenuDropdown.less#L88
+		.vector-user-menu-anon-editor,
+		.vector-user-menu-login {
+			padding: 0.625em;
+			margin: 0;
+			font-size: @font-size-tabs;
+		}
+
+		// "Login" and "Logout" links in user menu
+		.vector-user-menu-login {
+			&:hover {
+				background-color: @background-color-secondary;
+			}
+
+			&:first-child {
+				border-bottom: 1px solid @border-color-base;
+			}
+
+			&:last-child {
+				border-top: 1px solid @border-color-base;
+			}
+
+			a {
+				display: block;
+				color: #000;
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+// Custom for RTL
+html[dir="rtl"] .vector-user-links .vector-user-menu .vector-menu-content {
+	left: 0;
+    right: unset;
+}
+

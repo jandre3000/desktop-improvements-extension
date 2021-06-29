@@ -1,4 +1,4 @@
-# MediaWiki Prototypes extension
+# Wikipedia Prototypes extension
 
 A web extension that enables various prototype designs on Wikipedia.
 To install this extension in Chrome for testing or development purposes,

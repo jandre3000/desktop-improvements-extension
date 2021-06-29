@@ -1,18 +1,18 @@
 {
   "appName": {
-    "message": "Desktop Improvements for Wikipedia",
+    "message": "Wikipedia Prototypes",
     "description": "The name of the application"
   },
   "appShortName": {
-    "message": "Desktop Imp",
+    "message": "WikiProtypes",
     "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
   },
   "appDescription": {
-    "message": "Enables a preview of the Desktop Improvements project for Wikipedia.",
+    "message": "Get an inside look at new ideas and features from the Wikimedia Foundation.",
     "description": "The description of the application"
   },
   "browserActionTitle": {
-    "message": "Desktop Improvements for Wikipedia",
+    "message": "Wikipedia Prototypes",
     "description": "The title of the browser action button"
   }
 }

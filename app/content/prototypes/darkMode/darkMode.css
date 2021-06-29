@@ -192,6 +192,11 @@ img,
 	height: 124px;
 }
 
+.mw-logo-container {
+	filter: invert( 1 ) hue-rotate( 180deg );
+}
+
+
 /* Mobile Wikipedia logo mobile header */
  .branding-box img {
 	filter: brightness( 0 );

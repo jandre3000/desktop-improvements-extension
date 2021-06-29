@@ -1,17 +1,10 @@
-/**
- * This script is loaded when the extension is installed and
- * runs continuously in the background while the browser is open.
- */
-
-import { webNavigationFilters } from "@app/scripts/constants.js";
-
 function init() {
     browser.tabs.executeScript( {
-        file: '/prototypes/DIP/stickyHeader/app.js',
+        file: '/content/prototypes/stickyHeader/app.js',
         runAt: "document_end"
     } )
     browser.tabs.insertCSS( {
-        file: '/prototypes/DIP/stickyHeader/app.css',
+        file: '/content/prototypes/stickyHeader/app.css',
         runAt: "document_start"
     } )
 }
@@ -20,11 +13,7 @@ function enable() {
     if ( browser.webNavigation.onCommitted.hasListener(init) ) {
         return false;
     }
-
-    browser.webNavigation.onCommitted.addListener(
-        init,
-        webNavigationFilters
-    )
+    browser.webNavigation.onCommitted.addListener( init )
     return true;
 }
 
