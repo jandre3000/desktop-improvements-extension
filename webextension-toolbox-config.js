@@ -45,7 +45,9 @@ module.exports = {
         test: /\.less$/i,
         loader: [
           // compiles Less to CSS
-          "style-loader",
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
           "css-loader",
           "less-loader",
         ],
@@ -53,8 +55,10 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [
-          'vue-style-loader',
-          'css-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          "css-loader",
           'sass-loader'
         ]
       },

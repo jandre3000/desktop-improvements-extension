@@ -2,7 +2,7 @@
   "name": "__MSG_appName__",
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDescription__",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "manifest_version": 2,
   "default_locale": "en",
   "icons": {
@@ -19,8 +19,13 @@
   },
   "content_scripts": [
     {
-      "js": ["content/popup/popup.js"],
-      "css": ["content/popup/popup.css"],
+      "js": [
+        "/content/prototypes/tableOfContents/toc.js",
+        "/content/prototypes/modernMode/app.js"
+      ],
+      "css": [
+        "/content/prototypes/tableOfContents/toc.css"
+      ],
       "matches": [
         "https://*.wikipedia.org/*",
         "https://commons.wikimedia.org/*",
@@ -36,17 +41,15 @@
       ]
     }
   ],
-
   "background": {
     "scripts": [
-      "background/index.js"
+      "/background/index.js"
     ]
   },
   "permissions": [
     "storage",
     "tabs",
     "activeTab",
-    "webNavigation",
     "https://*.wikipedia.org/*",
     "https://commons.wikimedia.org/*",
     "https://*.wikibooks.org/*",

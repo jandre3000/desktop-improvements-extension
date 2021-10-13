@@ -1,10 +1,10 @@
 <template>
 	<div ref="container" class="prototype-options-container">
 		<button class="prototype-toggle-button"
-			:class="(uiOptions.visible.value ? 'open' : 'closed')"
+			:class="(uiState.visible.value ? 'open' : 'closed')"
 			@click="toggleUIVisibility" />
 
-		<form class="prototype-options-form" :class="(uiOptions.visible.value ? 'open' : 'closed')">
+		<form class="prototype-options-form" :class="(uiState.visible.value ? 'open' : 'closed')">
 			<h1>Wikimedia Prototypes</h1>
 
 			<div class="row">
@@ -13,37 +13,8 @@
 			</div>
 
 			<div class="row-indented">
-				<label class="label">Language switcher</label>
-				<Checkbox v-model="userPreferences.dipLanguageSwitcher.value" :binary="true" />
-			</div>
-
-			<div class="row-indented">
-				<label class="label">Compact user menu</label>
-				<Checkbox v-model="userPreferences.compactUserMenu.value" :binary="true" />
-			</div>
-
-			<div class="row-indented">
-				<label class="label">Scrolling header</label>
-				<Checkbox v-model="userPreferences.stickyHeader.value" :binary="true" />
-			</div>
-
-			<!--
-			<div class="row-indented">
 				<label class="label">Table of Contents</label>
-				<Checkbox v-model="userPreferences.dipToc.value" :binary="true" />
-			</div>
-
-			<div class="row-indented">
-				<label class="label">Line length</label>
-				<Slider
-					:step="20"
-					:min="50"
-					:max="200" />
-			</div>
-			-->
-			<div class="row">
-				<label class="label--large">Dark Mode</label>
-				<InputSwitch v-model="userPreferences.darkMode.value" :binary="true" />
+				<Checkbox v-model="userPreferences.toc.value" :binary="true" />
 			</div>
 
 		</form>
@@ -55,7 +26,7 @@ import { ref, reactive, watch } from 'vue';
 import InputSwitch from 'primevue/inputswitch';
 import Checkbox from 'primevue/checkbox';
 import Slider from 'primevue/slider';
-import { defaultUserPreferences, defaultUIOptions } from '../../background/constants.js';
+import { defaultUserPreferences, defaultUIState } from '../../background/constants.js';
 
 export default {
 	components: {
@@ -67,7 +38,7 @@ export default {
 
 		const userPreferences = reactive( defaultUserPreferences ),
 			activeOption = ref( '' ),
-			uiOptions = reactive( defaultUIOptions );
+			uiState = reactive( defaultUIState );
 
 		function savePreferencesOnChange() {
 			watch( userPreferences, function ( val ) {
@@ -76,7 +47,7 @@ export default {
 		}
 
 		function toggleUIVisibility() {
-			uiOptions.visible.value = !uiOptions.visible.value;
+			uiState.visible.value = !uiState.visible.value;
 		}
 
 		browser.storage.local.get( 'userPreferences' )
@@ -86,26 +57,19 @@ export default {
 			.then( savePreferencesOnChange );
 
 
-		browser.storage.local.get( 'uiOptions' )
+		browser.storage.local.get( 'uiState' )
 			.then( ( storage ) => {
-				Object.assign( uiOptions, storage.uiOptions );
+				Object.assign( uiState, storage.uiState );
 			} )
 			.then( () => {
-				watch( uiOptions, function ( val ) {
-					browser.storage.local.set( { uiOptions: val } );
+				watch( uiState, function ( val ) {
+					browser.storage.local.set( { uiState: val } );
 				} );
 			} );
 
-		document.addEventListener( 'click', ( event ) => {
-			// debugger;
-			// if ( this.$refs.container.closest( event.target ) ) {
-
-			// }
-		} )
-
 
 		return {
-			uiOptions,
+			uiState,
 			userPreferences,
 			toggleUIVisibility,
 			activeOption
