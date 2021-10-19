@@ -12,7 +12,7 @@
                     <Icon type="clear" color="inherit"></Icon>
                 </Button>
                 <h3>Table of Contents</h3>
-                <Button variant="primary" type="progressive">Save</Button>
+                <Button @click.native="reload" variant="primary" type="progressive">Save</Button>
             </div>
 
             <div class="toc-settings-modal-content">
@@ -23,12 +23,10 @@
                 please reach out to us via our talk page: <a href="#">link to talk page</a>.
                 </p>
                 <form action="">
-                    <Checkbox label="Expand section when I scroll to it"></Checkbox>
-                    <Checkbox label="Expand all sections by default"></Checkbox>
-                    <Checkbox label="Number sections"></Checkbox>
-                    <Checkbox label="Don't wrap section titles (use ellipses instead)"></Checkbox>
-                    <Checkbox label="Show table of contents on Talk pages"></Checkbox>
-                    <Checkbox label="Show table of contents in editing mode"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocExpandOnScroll" label="Expand section when I scroll to it"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocExpandAll" label="Expand all sections by default"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocNumbered" label="Number sections"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocEllipses" label="Don't wrap section titles (use ellipses instead)"></Checkbox>
                 </form>
             </div>
         </div>
@@ -38,18 +36,39 @@
 <script>
 import { Button, Icon, Checkbox } from '@wmde/wikit-vue-components';
 
+const defaultTocStyles = {
+    tocExpandOnScroll: false,
+    tocExpandAll: false,
+    tocNumbered: false,
+    tocEllipses: false,
+    tocDepth: 6
+};
+
 export default {
     name: "TocSettings",
     data() {
+        const storedPreferences = window.localStorage.getItem( 'tocStyles' );
         return {
-            open: false
+            open: false,
+            tocStyles: JSON.parse( storedPreferences ) || defaultTocStyles
         }
     },
     components: { Button, Icon, Checkbox },
     methods: {
         toggle() {
             this.open = !this.open;
+        },
+        reload() {
+            location.reload();
         }
+    },
+    watch: {
+        tocStyles: {
+            deep: true,
+            handler: function( updatedTocStyles ) {
+                window.localStorage.setItem( 'tocStyles', JSON.stringify( updatedTocStyles ) );
+            }
+        },
     }
 }
 </script>

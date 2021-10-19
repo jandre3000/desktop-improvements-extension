@@ -6,7 +6,7 @@ function getExistingDOMNodes() {
     return {
         tocEl: document.getElementById('toc'),
         sidebar: document.querySelector( '#mw-navigation' ),
-        tocLinks: document.getElementById('toc').querySelectorAll( 'a' ),
+        tocLinks: ( document.getElementById('toc') ) ? document.getElementById('toc').querySelectorAll( 'a' ) : null,
         headings: document
         .getElementById('bodyContent')
         .querySelectorAll( 'h1, h2, h3, h4, h5, h6'),
@@ -23,8 +23,19 @@ function editTocDOM( tocEl ) {
     tocEl.classList.add( 'toc-wrapper' );
     tocEl.classList.remove( 'toc' );
 
+    const tocStyles = getTocStyles();
+
+    for ( const style in tocStyles ) {
+        if ( !tocStyles[ style ] ) continue;
+        if ( style === 'tocDepth' ) {
+            tocEl.classList.add( `${style}-${tocStyles[ style ]}` );
+        } else {
+            tocEl.classList.add( style );
+        }
+      }
+
     // Add collapse/expand arrows
-    tocEl.querySelectorAll( 'li.toclevel-1').forEach( ( level1 ) => {
+    tocEl.querySelectorAll( 'li.toclevel-1' ).forEach( ( level1 ) => {
         const hasChildLevels = level1.querySelector( 'ul' );
         if ( hasChildLevels  ) {
             const sectionToggleEl = createTocSectionToggleIcon();
@@ -34,6 +45,10 @@ function editTocDOM( tocEl ) {
     } )
 
     enableTocSectionToggleIcon( tocEl );
+}
+
+function addTocBodyClass() {
+    document.body.classList.add( 'sidebar-toc' );
 }
 
 function createTocSectionToggleIcon() {
@@ -60,7 +75,11 @@ function createTocSettings( tocEl ) {
 }
 
 function init() {
-    const {tocEl, sidebar, headings, tocLinks } = getExistingDOMNodes(),
+    const {tocEl, sidebar, headings, tocLinks } = getExistingDOMNodes();
+
+    if ( !tocEl ) return;
+
+    const
         { nodeLinkMap, contentElements }= createSectionTocLinkMap(),
         observerCallback = createIntersectionObserverCallback( tocEl, nodeLinkMap ),
         observer = new IntersectionObserver(
@@ -69,6 +88,7 @@ function init() {
             threshold: 0.1
     });
 
+    addTocBodyClass( tocEl );
     editTocDOM( tocEl );
     moveToCtoSidebar( tocEl, sidebar );
     createTocSettings( tocEl );
@@ -104,7 +124,7 @@ function createIntersectionObserverCallback( tocEl, nodeLinkMap ) {
         if ( !entry.isIntersecting )  return;
 
         const currentTocHref = nodeLinkMap.get( entry.target );
-        const currentTocLink = tocEl.querySelector( `a[href="#${currentTocHref}"]` );
+        const currentTocLink = tocEl.querySelector( `a[href="#${CSS.escape(currentTocHref)}"]` );
         const activeTocLink = tocEl.querySelector( `a.active` );
         const activeTocListItem = tocEl.querySelectorAll( `li.expanded` );
 
@@ -121,9 +141,42 @@ function createIntersectionObserverCallback( tocEl, nodeLinkMap ) {
         if ( currentTocLink ) {
             currentTocLink.classList.add( 'active' );
             currentTocLink.parentElement.classList.add( 'active' );
-            currentTocLink.closest( '.toclevel-1').classList.add( 'expanded' );
+
+            if ( currentTocLink.closest( '.toclevel-1') ) {
+                currentTocLink.closest( '.toclevel-1').classList.add( 'expanded' );
+                /* currentTocLink.closest( '.toclevel-1').classList.add( 'active' ); */
+            }
         }
     }
 }
 
-init();
+window.addEventListener('load', (event) => {
+    init();
+});
+
+
+const observer = new MutationObserver( ( mutationsList, observer ) => {
+    for(const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            if ( mutation.target.nodeType === Node.ELEMENT_NODE && mutation.target.id === 'toc' ) {
+                addTocBodyClass();
+                observer.disconnect();
+            }
+        }
+    }
+});
+
+const defaultTocStyles = {
+    tocExpandOnScroll: false,
+    tocExpandAll: false,
+    tocNumbered: false,
+    tocEllipses: false,
+    tocDepth: 6
+};
+
+function getTocStyles() {
+    const storedStyles = window.localStorage.getItem( 'tocStyles' );
+    return JSON.parse( storedStyles ) || defaultTocStyles;
+};
+
+observer.observe(document, { attributes: false, childList: true, subtree: true } );

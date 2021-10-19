@@ -19,6 +19,7 @@
   },
   "content_scripts": [
     {
+      "run_at": "document_start",
       "js": [
         "/content/prototypes/tableOfContents/toc.js",
         "/content/prototypes/modernMode/app.js"

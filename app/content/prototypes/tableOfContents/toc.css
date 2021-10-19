@@ -1,6 +1,11 @@
-.mw-content-container,
-.mw-workspace-container .mw-article-toolbar-container {
+
+.sidebar-toc .mw-content-container,
+.sidebar-toc .mw-workspace-container .mw-article-toolbar-container {
   margin-left: 14em !important;
+}
+
+#mw-panel {
+  background-color: transparent;
 }
 
 .toctogglespan {
@@ -15,10 +20,11 @@
     z-index: 4;
     position: relative;
     float: left;
-    width: 12em;
+    width: 12rem;
     height: fit-content;
     max-height: 90vh;
     margin: 0;
+    margin-right: 1rem;
     position: sticky;
     top: 22px;
     overflow: scroll;
@@ -83,6 +89,10 @@
     font-weight: normal;
     color: inherit;
   }
+  .toc-wrapper .tocnumber {
+    display: none;
+  }
+
   .toclevel-1 a, .toclevel-1 a:visited {
     color: #3366cc;
   }
@@ -152,25 +162,66 @@
   .toc-wrapper ul li a:hover {
     opacity: 0.8;
   }
-  .toc-wrapper ul .tocnumber {
-    display: none;
-    margin-right: 5px;
-    color: black;
-    font-weight: normal;
-  }
+
   .toc-wrapper ul .toctext {
     padding-bottom: 5px;
   }
 
+.toc-wrapper:not( .tocExpandOnScroll ) .toclevel-1.expanded > a {
+  font-weight: bold;
+}
+
 /* Expand while scrolling */
-.toc-wrapper .toclevel-1.collapsed.active li,
-.toc-wrapper .toclevel-1.collapsed.expanded li {
+.tocExpandOnScroll.toc-wrapper .toclevel-1.collapsed.active li,
+.tocExpandOnScroll.toc-wrapper .toclevel-1.collapsed.expanded li {
   display: block;
 }
 
-/* Always expanded */
-/*
-.toc-wrapper .toclevel-1.collapsed li {
+/* Always expanded
+ * ---------------
+ */
+.tocExpandAll.toc-wrapper .toclevel-1.collapsed li {
   display: block;
 }
-*/
+
+/* Truncate lines
+ * --------------
+ */
+.tocEllipses.toc-wrapper ul li a {
+  display: flex;
+}
+
+.tocEllipses.toc-wrapper .toctext {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Display numbers
+ * ---------------
+ */
+ .tocNumbered.toc-wrapper {
+   padding-left: 0.2em;
+ }
+
+ .toc-wrapper ul li {
+   padding-left: 0.5em;
+ }
+
+.tocNumbered.toc-wrapper ul li a {
+  display: flex;
+}
+
+.tocNumbered.toc-wrapper .tocnumber {
+  display: block;
+  padding-right: 0.5em;
+}
+
+/* Depth levels numbers
+ * ---------------
+ */
+.tocDepth-5.toc-wrapper li.toclevel-6 { display: none; }
+.tocDepth-4.toc-wrapper li.toclevel-5 { display: none; }
+.tocDepth-3.toc-wrapper li.toclevel-4 { display: none; }
+.tocDepth-2.toc-wrapper li.toclevel-3 { display: none; }
+.tocDepth-1.toc-wrapper li.toclevel-2 { display: none; }
