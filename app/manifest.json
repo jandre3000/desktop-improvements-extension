@@ -2,7 +2,7 @@
   "name": "__MSG_appName__",
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDescription__",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "manifest_version": 2,
   "default_locale": "en",
   "icons": {
@@ -21,11 +21,11 @@
     {
       "run_at": "document_start",
       "js": [
-        "/content/prototypes/tableOfContents/toc.js",
-        "/content/prototypes/modernMode/app.js"
+        "content/prototypes/tableOfContents/toc.js",
+        "content/prototypes/modernMode/app.js"
       ],
       "css": [
-        "/content/prototypes/tableOfContents/toc.css"
+        "content/prototypes/tableOfContents/toc.css"
       ],
       "matches": [
         "https://*.wikipedia.org/*",
