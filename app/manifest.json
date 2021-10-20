@@ -2,7 +2,7 @@
   "name": "__MSG_appName__",
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDescription__",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "manifest_version": 2,
   "default_locale": "en",
   "icons": {
@@ -41,26 +41,5 @@
         "https://office.wikimedia.org/*"
       ]
     }
-  ],
-  "background": {
-    "scripts": [
-      "/background/index.js"
-    ]
-  },
-  "permissions": [
-    "storage",
-    "tabs",
-    "activeTab",
-    "https://*.wikipedia.org/*",
-    "https://commons.wikimedia.org/*",
-    "https://*.wikibooks.org/*",
-    "https://*.wikiversity.org/*",
-    "https://*.wikivoyage.org/*",
-    "https://*.wikinews.org/*",
-    "https://*.wikiquote.org/*",
-    "https://*.wiktionary.org/*",
-    "https://www.wikidata.org/*",
-    "https://www.mediawiki.org/*",
-    "https://office.wikimedia.org/*"
   ]
 }
