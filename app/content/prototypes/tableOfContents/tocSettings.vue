@@ -1,7 +1,9 @@
 <template>
     <div class="toc-settings">
         <Button variant="quiet" iconOnly @click.native="toggle">
-            <Icon type="info" size="medium"></Icon>
+            <span class="wikit wikit-Icon wikit-Icon--medium wikit-Icon--base">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20"><title>settings</title><g transform="translate(10 10)"><path id="a" d="M1.5-10h-3l-1 6.5h5m0 7h-5l1 6.5h3"/><use transform="rotate(45)" xlink:href="#a"/><use transform="rotate(90)" xlink:href="#a"/><use transform="rotate(135)" xlink:href="#a"/></g><path d="M10 2.5a7.5 7.5 0 000 15 7.5 7.5 0 000-15v4a3.5 3.5 0 010 7 3.5 3.5 0 010-7"/></svg>
+            </span>
         </Button>
 
         <div @click="toggle" :class="open ? 'toc-settings-overlay open' : 'toc-settings-overlay' "></div>
@@ -76,9 +78,10 @@ export default {
 <style scoped>
 @import '@wmde/wikit-vue-components/dist/wikit-vue-components.css';
 .toc-settings {
-    float: right;
-    position: relative;
-    z-index: 1;
+    position: absolute;
+    top: 10px;
+    right: 0;
+    z-index: 3;
 }
 
 .toc-settings-overlay.open {

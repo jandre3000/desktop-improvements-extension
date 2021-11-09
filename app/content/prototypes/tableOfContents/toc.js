@@ -13,57 +13,74 @@ function getExistingDOMNodes() {
     }
 }
 
-function moveToCtoSidebar( tocEl, sidebar ) {
-    sidebar.after( tocEl );
-}
+function getTocStyles() {
+    const storedStyles = window.localStorage.getItem( 'tocStyles' );
+    return JSON.parse( storedStyles ) || defaultTocStyles;
+};
 
-function editTocDOM( tocEl ) {
-    // Remove default styles
+function editTocDOM( tocEl, sidebar ) {
+
+    function createTocSectionToggleIcon() {
+        const el = document.createElement( 'span' );
+        el.classList.add( 'toc-toggle');
+        return el;
+    }
+
+    function createIntroSection( tocEl ) {
+        tocEl.lastElementChild.insertAdjacentHTML('afterbegin', `
+        <li class="toclevel-1">
+            <a href="#firstHeading">
+                <span class="toctext">
+                    Introduction
+                </span>
+            </a>
+        </li>`);
+    }
+    function toggleSection( activeEl ) {
+        level1ListItems.forEach( el => {
+            if ( el !== activeEl ) {
+                el.classList.remove( 'expanded' );
+            }
+        }  );
+        activeEl.classList.toggle( 'expanded' );
+    }
+
+    const tocStyles = getTocStyles();
+    const level1ListItems = tocEl.querySelectorAll( 'li.toclevel-1' );
+
+    // Edit default styles
     tocEl.removeAttribute( 'id' );
     tocEl.classList.add( 'toc-wrapper' );
     tocEl.classList.remove( 'toc' );
 
-    const tocStyles = getTocStyles();
-
-    for ( const style in tocStyles ) {
+    // option specific styling.
+    for ( let style in tocStyles ) {
         if ( !tocStyles[ style ] ) continue;
         if ( style === 'tocDepth' ) {
             tocEl.classList.add( `${style}-${tocStyles[ style ]}` );
+        } else if ( style === 'tocExpandAll' ) {
+            tocEl.querySelectorAll( 'li' ).forEach( li => li.classList.add( 'expanded' ))
         } else {
             tocEl.classList.add( style );
         }
       }
 
-    // Add collapse/expand arrows
-    tocEl.querySelectorAll( 'li.toclevel-1' ).forEach( ( level1 ) => {
-        const hasChildLevels = level1.querySelector( 'ul' );
-        if ( hasChildLevels  ) {
-            const sectionToggleEl = createTocSectionToggleIcon();
-            level1.prepend( sectionToggleEl );
-            level1.classList.add( 'collapsed' );
-        }
-    } )
+    for ( let level1Li of level1ListItems ) {
+        const hasExpandableSections = level1Li.querySelector( 'ul' );
+        if (!hasExpandableSections) continue;
+        const sectionToggleArrow = createTocSectionToggleIcon();
+        sectionToggleArrow.addEventListener( 'click', toggleSection.bind( null, level1Li ) )
+        level1Li.prepend( sectionToggleArrow );
+    }
 
-    enableTocSectionToggleIcon( tocEl );
+    sidebar.after( tocEl );
+    createIntroSection( tocEl );
 }
 
 function addTocBodyClass() {
-    document.body.classList.add( 'sidebar-toc' );
-}
-
-function createTocSectionToggleIcon() {
-    const el = document.createElement( 'span' );
-    el.classList.add( 'toc-toggle');
-    return el;
-}
-
-function enableTocSectionToggleIcon( tocEl ) {
-    tocEl.addEventListener( 'click', function( e ) {
-        if ( !e.target.classList.contains( 'toc-toggle' ) ) {
-            return;
-        }
-        e.target.parentNode.classList.toggle( 'collapsed' );
-    })
+    if ( document.body ) {
+        document.body.classList.add( 'sidebar-toc' );
+    }
 }
 
 function createTocSettings( tocEl ) {
@@ -74,88 +91,89 @@ function createTocSettings( tocEl ) {
       }).$mount( settingsTargetEl );
 }
 
+let initCalled = false;
+
 function init() {
-    const {tocEl, sidebar, headings, tocLinks } = getExistingDOMNodes();
+
+    if ( initCalled ) {
+        return;
+    }
+
+    const { tocEl, sidebar } = getExistingDOMNodes();
 
     if ( !tocEl ) return;
 
-    const
-        { nodeLinkMap, contentElements }= createSectionTocLinkMap(),
-        observerCallback = createIntersectionObserverCallback( tocEl, nodeLinkMap ),
-        observer = new IntersectionObserver(
-        observerCallback, {
-            rootMargin: '0% 0px -80% 0px',
-            threshold: 0.1
-    });
-
     addTocBodyClass( tocEl );
-    editTocDOM( tocEl );
-    moveToCtoSidebar( tocEl, sidebar );
+    editTocDOM( tocEl, sidebar);
     createTocSettings( tocEl );
-    [...contentElements].forEach( el => observer.observe( el ) );
+    const { headings } = getExistingDOMNodes();
+    initIntersectionObserver( headings, tocEl );
+    initCalled = true;
 }
 
-function createSectionTocLinkMap() {
-    const contentElements = document
-        .querySelector( '.mw-parser-output' )
-        .querySelectorAll(":scope > *:not(.hatnote):not(.thumb):not(img)");
-    const nodeLinkMap = new Map();
-    let currentHeading = "";
-    for ( const el of contentElements ) {
-        if ( [ 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' ].indexOf( el.nodeName ) >= 0 ) {
-            currentHeading = el.querySelector( '.mw-headline' ).getAttribute('id');
-        }
-        nodeLinkMap.set( el, currentHeading );
+function setActiveToCLink( sectionId, tocEl ) {
+    const tocLinks = tocEl.querySelectorAll( 'li a' );
+    const activeTocLink = tocEl.querySelector( `a[href="#${CSS.escape( sectionId )}"]` );
+    const { tocExpandAll, tocExpandOnScroll } = getTocStyles();
+
+    if ( !activeTocLink ) return;
+
+    const activeTopLevelSection = activeTocLink.closest( '.toclevel-1');
+
+    tocEl.querySelectorAll( '.toclevel-1' ).forEach( l1 => {
+        l1.classList.remove('active' )
+        if ( !tocExpandAll ) l1.classList.remove('expanded' );
+    } )
+
+    if ( tocExpandOnScroll || tocExpandAll ) {
+        activeTopLevelSection.classList.add( 'expanded' );
     }
-    return { nodeLinkMap, contentElements };
-}
-/**
- * NOTE: Sometimes the section ID and the href attribute are different.
- * e.g. https://en.wikipedia.org/wiki/Football_in_England?useskinversion=2#1992%E2%80%93present:_Premier_League_era
- * doesn't work because the href "#1992–present:_Premier_League_era"
- * doesn't match the ID, "1992.E2.80.93present%3A_Premier_League_era".
- * @param {*} observerEntries
- * @returns
- */
-function createIntersectionObserverCallback( tocEl, nodeLinkMap ) {
-    return function( entries ) {
-        const entry = entries[ 0 ];
+    activeTopLevelSection.classList.add( 'active' );
+    tocLinks.forEach( l => l.classList.remove('active') )
+    activeTocLink.classList.add( 'active')
+};
 
-        if ( !entry.isIntersecting )  return;
+function getTopMostHeading( headings ) {
+    let topOfPageY = 60;
+    let closestHeadingY = topOfPageY;
+    let closestHeading;
 
-        const currentTocHref = nodeLinkMap.get( entry.target );
-        const currentTocLink = tocEl.querySelector( `a[href="#${CSS.escape(currentTocHref)}"]` );
-        const activeTocLink = tocEl.querySelector( `a.active` );
-        const activeTocListItem = tocEl.querySelectorAll( `li.expanded` );
-
-        if ( currentTocLink === activeTocLink ) return;
-
-        if ( activeTocLink && currentTocLink ) {
-            activeTocLink.classList.remove( 'active' );
-            [...activeTocListItem].forEach( li => {
-                li.classList.remove( 'expanded' )
-                li.classList.remove( 'active' )
-            }  );
+    for (let currentHeading of headings ) {
+        if ( closestHeadingY === topOfPageY ) {
+            closestHeading = document.getElementById('firstHeading');
+            closestHeadingY = document.getElementById('firstHeading').getBoundingClientRect().y;
+        } else if (
+            currentHeading.getBoundingClientRect().y < topOfPageY &&
+            currentHeading.getBoundingClientRect().y > closestHeadingY
+        ) {
+            closestHeading = currentHeading;
+            closestHeadingY = currentHeading.getBoundingClientRect().y;
         }
+    }
 
-        if ( currentTocLink ) {
-            currentTocLink.classList.add( 'active' );
-            currentTocLink.parentElement.classList.add( 'active' );
+    return closestHeading;
+}
 
-            if ( currentTocLink.closest( '.toclevel-1') ) {
-                currentTocLink.closest( '.toclevel-1').classList.add( 'expanded' );
-                /* currentTocLink.closest( '.toclevel-1').classList.add( 'active' ); */
+function initIntersectionObserver( headings, tocEl ) {
+    const observer = new IntersectionObserver( () => {
+        const activeHeading = getTopMostHeading( headings );
+        if ( activeHeading ) {
+            const activeHeadingEl = activeHeading.querySelector( '.mw-headline');
+            if ( activeHeadingEl ) {
+                setActiveToCLink( activeHeadingEl.id, tocEl );
+            } else {
+                setActiveToCLink( activeHeading.id, tocEl );
             }
         }
-    }
+    },
+    {
+        rootMargin: '-60px 0px 0px 0px',
+        threshold: 1
+    } );
+    [...headings].forEach( h => observer.observe( h ) );
 }
 
-window.addEventListener('load', (event) => {
-    init();
-});
-
-
-const observer = new MutationObserver( ( mutationsList, observer ) => {
+const domReadyObserver = new MutationObserver( ( mutationsList, observer ) => {
     for(const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             if ( mutation.target.nodeType === Node.ELEMENT_NODE && mutation.target.id === 'toc' ) {
@@ -166,17 +184,24 @@ const observer = new MutationObserver( ( mutationsList, observer ) => {
     }
 });
 
+window.addEventListener('load', () => {
+    init();
+});
+
+
+
 const defaultTocStyles = {
-    tocExpandOnScroll: false,
+    tocExpandOnScroll: true,
     tocExpandAll: false,
     tocNumbered: false,
     tocEllipses: false,
     tocDepth: 6
 };
 
-function getTocStyles() {
-    const storedStyles = window.localStorage.getItem( 'tocStyles' );
-    return JSON.parse( storedStyles ) || defaultTocStyles;
-};
+domReadyObserver.observe(document, { attributes: false, childList: true, subtree: true } );
 
-observer.observe(document, { attributes: false, childList: true, subtree: true } );
+// If calling from resourceLoader, after document.ready.
+if (typeof mw !== 'undefined' ) {
+    addTocBodyClass();
+    init();
+}
