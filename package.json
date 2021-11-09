@@ -4,7 +4,7 @@
   "description": "Enables the Desktop Improvements project for anonynmous users on Wikipedia.",
   "scripts": {
     "start": "webextension-toolbox dev chrome",
-    "build": "webextension-toolbox build chrome",
+    "build": "webextension-toolbox build --no-minimize chrome",
     "lint": "eslint --max-warnings 0  app/**/**.js app/**/*.vue"
   },
   "devDependencies": {
