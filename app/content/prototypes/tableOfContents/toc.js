@@ -8,7 +8,7 @@ function getExistingDOMNodes() {
         sidebar: document.querySelector( '#mw-navigation' ),
         tocLinks: ( document.getElementById('toc') ) ? document.getElementById('toc').querySelectorAll( 'a' ) : null,
         headings: document
-        .getElementById('bodyContent')
+        .getElementById('content')
         .querySelectorAll( 'h1, h2, h3, h4, h5, h6'),
     }
 }
@@ -45,13 +45,14 @@ function editTocDOM( tocEl, sidebar ) {
         activeEl.classList.toggle( 'expanded' );
     }
 
-    const tocStyles = getTocStyles();
-    const level1ListItems = tocEl.querySelectorAll( 'li.toclevel-1' );
-
     // Edit default styles
     tocEl.removeAttribute( 'id' );
     tocEl.classList.add( 'toc-wrapper' );
     tocEl.classList.remove( 'toc' );
+    createIntroSection( tocEl );
+    sidebar.after( tocEl );
+    const tocStyles = getTocStyles();
+    const level1ListItems = tocEl.querySelectorAll( 'li.toclevel-1' );
 
     // option specific styling.
     for ( let style in tocStyles ) {
@@ -72,9 +73,6 @@ function editTocDOM( tocEl, sidebar ) {
         sectionToggleArrow.addEventListener( 'click', toggleSection.bind( null, level1Li ) )
         level1Li.prepend( sectionToggleArrow );
     }
-
-    sidebar.after( tocEl );
-    createIntroSection( tocEl );
 }
 
 function addTocBodyClass() {
