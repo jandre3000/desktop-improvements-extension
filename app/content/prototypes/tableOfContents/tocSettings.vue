@@ -22,7 +22,7 @@
                 We are testing a new position for the table of contents.
                 Please try out the diferent options below, and take a few days
                 to sit with each. When you've formed an opinion about something
-                please reach out to us via our talk page: <a href="#">link to talk page</a>.
+                please reach out to us via our talk page.
                 </p>
                 <form action="">
                     <Checkbox :checked.sync="tocStyles.tocExpandOnScroll" label="Expand section when I scroll to it"></Checkbox>

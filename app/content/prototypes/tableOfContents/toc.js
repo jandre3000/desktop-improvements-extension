@@ -10,6 +10,7 @@ function getExistingDOMNodes() {
         headings: document
         .getElementById('content')
         .querySelectorAll( 'h1, h2, h3, h4, h5, h6'),
+        stickyHeader: document.getElementById( 'vector-sticky-header' )
     }
 }
 
@@ -17,6 +18,27 @@ function getTocStyles() {
     const storedStyles = window.localStorage.getItem( 'tocStyles' );
     return JSON.parse( storedStyles ) || defaultTocStyles;
 };
+
+function toggleSection( level1ListItems, activeEl ) {
+    const { tocExpandAll, tocExpandOnScroll } = getTocStyles();
+    [...level1ListItems].forEach( el => {
+        if ( el !== activeEl ) {
+            el.classList.remove( 'expanded' );
+        }
+    }  );
+    activeEl.classList.add( 'expanded' );
+}
+
+function toggleSectionOnClick( level1ListItems, activeEl ) {
+    const { tocExpandAll, tocExpandOnScroll } = getTocStyles();
+    [...level1ListItems].forEach( el => {
+        if ( el !== activeEl ) {
+            el.classList.remove( 'expanded' );
+        }
+    }  );
+    activeEl.classList.toggle( 'expanded' );
+}
+
 
 function editTocDOM( tocEl, sidebar ) {
 
@@ -35,14 +57,6 @@ function editTocDOM( tocEl, sidebar ) {
                 </span>
             </a>
         </li>`);
-    }
-    function toggleSection( activeEl ) {
-        level1ListItems.forEach( el => {
-            if ( el !== activeEl ) {
-                el.classList.remove( 'expanded' );
-            }
-        }  );
-        activeEl.classList.toggle( 'expanded' );
     }
 
     // Edit default styles
@@ -70,8 +84,11 @@ function editTocDOM( tocEl, sidebar ) {
         const hasExpandableSections = level1Li.querySelector( 'ul' );
         if (!hasExpandableSections) continue;
         const sectionToggleArrow = createTocSectionToggleIcon();
-        sectionToggleArrow.addEventListener( 'click', toggleSection.bind( null, level1Li ) )
-        level1Li.prepend( sectionToggleArrow );
+
+        // Get the first link.
+        const level1a = level1Li.querySelector('a');
+        level1a.addEventListener( 'click', toggleSectionOnClick.bind( null, level1ListItems, level1Li ) );
+        level1a.prepend( sectionToggleArrow );
     }
 }
 
@@ -97,9 +114,13 @@ function init() {
         return;
     }
 
-    const { tocEl, sidebar } = getExistingDOMNodes();
+    const { tocEl, sidebar, stickyHeader } = getExistingDOMNodes();
 
     if ( !tocEl ) return;
+
+    if ( stickyHeader ) {
+        stickyHeaderObserver.observe( stickyHeader, { attributes: true, childList: false, subtree: false }  );
+    }
 
     addTocBodyClass( tocEl );
     editTocDOM( tocEl, sidebar);
@@ -118,13 +139,13 @@ function setActiveToCLink( sectionId, tocEl ) {
 
     const activeTopLevelSection = activeTocLink.closest( '.toclevel-1');
 
+
     tocEl.querySelectorAll( '.toclevel-1' ).forEach( l1 => {
         l1.classList.remove('active' )
-        if ( !tocExpandAll ) l1.classList.remove('expanded' );
     } )
 
     if ( tocExpandOnScroll || tocExpandAll ) {
-        activeTopLevelSection.classList.add( 'expanded' );
+        toggleSection( tocEl.querySelectorAll( '.toclevel-1' ), activeTopLevelSection  )
     }
     activeTopLevelSection.classList.add( 'active' );
     tocLinks.forEach( l => l.classList.remove('active') )
@@ -171,6 +192,20 @@ function initIntersectionObserver( headings, tocEl ) {
     [...headings].forEach( h => observer.observe( h ) );
 }
 
+const stickyHeaderObserver = new MutationObserver( ( mutationsList, observer ) => {
+    for (const mutation of mutationsList) {
+        if (
+            mutation.target.classList.contains('vector-sticky-header-visible')
+        ) {
+            document.documentElement.style.setProperty('--sidebar-toc-top', "72px");
+        } else if (
+            !mutation.target.classList.contains('vector-sticky-header-visible')
+        ) {
+            document.documentElement.style.setProperty('--sidebar-toc-top', "20px");
+        }
+    }
+} );
+
 const domReadyObserver = new MutationObserver( ( mutationsList, observer ) => {
     for(const mutation of mutationsList) {
         if (mutation.type === 'childList') {
@@ -200,6 +235,19 @@ domReadyObserver.observe(document, { attributes: false, childList: true, subtree
 
 // If calling from resourceLoader, after document.ready.
 if (typeof mw !== 'undefined' ) {
-    addTocBodyClass();
     init();
+    // For patch demo, intercept all clicks and ensure they are redirected to production content pages
+    var content = document.querySelector('.mw-parser-output');
+
+    content.addEventListener( 'click', e => {
+    if (
+        e.target.nodeType === 1 &&
+        e.target.tagName === 'A' &&
+        /^\/wiki/.test( e.target.getAttribute( 'href' ) )
+    ) {
+        var hrefParts = e.target.href.split('/');
+        var title = hrefParts[ hrefParts.length-1 ];
+        e.target.setAttribute( 'href', `${mw.config.get('wgScript')}?title=${title}` );
+    }
+    })
 }
