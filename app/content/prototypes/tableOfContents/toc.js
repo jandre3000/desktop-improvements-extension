@@ -192,7 +192,7 @@ function initIntersectionObserver( headings, tocEl ) {
     [...headings].forEach( h => observer.observe( h ) );
 }
 
-const stickyHeaderObserver = new MutationObserver( ( mutationsList, observer ) => {
+const stickyHeaderObserver = new MutationObserver( ( mutationsList  ) => {
     for (const mutation of mutationsList) {
         if (
             mutation.target.classList.contains('vector-sticky-header-visible')
