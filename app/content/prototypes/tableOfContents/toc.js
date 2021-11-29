@@ -88,7 +88,12 @@ function editTocDOM( tocEl, sidebar ) {
         // Get the first link.
         const level1a = level1Li.querySelector('a');
         level1a.addEventListener( 'click', toggleSectionOnClick.bind( null, level1ListItems, level1Li ) );
-        level1a.prepend( sectionToggleArrow );
+        sectionToggleArrow.addEventListener( 'click', function( e ) {
+            level1Li.classList.toggle( 'expanded' );
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        level1Li.prepend( sectionToggleArrow );
     }
 }
 
