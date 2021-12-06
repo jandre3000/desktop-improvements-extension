@@ -19,16 +19,13 @@
 
             <div class="toc-settings-modal-content">
                 <p>
-                We are testing a new position for the table of contents.
-                Please try out the diferent options below, and take a few days
-                to sit with each. When you've formed an opinion about something
-                please reach out to us via our talk page.
+                    {{ $i18n('settings') }}
                 </p>
                 <form action="">
-                    <Checkbox :checked.sync="tocStyles.tocExpandOnScroll" label="Expand section when I scroll to it"></Checkbox>
-                    <Checkbox :checked.sync="tocStyles.tocExpandAll" label="Expand all sections by default"></Checkbox>
-                    <Checkbox :checked.sync="tocStyles.tocNumbered" label="Number sections"></Checkbox>
-                    <Checkbox :checked.sync="tocStyles.tocEllipses" label="Don't wrap section titles (use ellipses instead)"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocExpandOnScroll" v-bind:label="$i18n('expandOnScroll')"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocExpandAll" v-bind:label="$i18n('expandbyDefault')"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocNumbered" v-bind:label="$i18n('numberSections')"></Checkbox>
+                    <Checkbox :checked.sync="tocStyles.tocEllipses" v-bind:label="$i18n('useEllipses')"></Checkbox>
                 </form>
             </div>
         </div>

@@ -28,7 +28,8 @@
     "webpack-glob-entries-plugin": "1.0.0"
   },
   "dependencies": {
+    "@wmde/wikit-vue-components": "^2.1.0-alpha.4",
     "vue": "^2.6.14",
-    "@wmde/wikit-vue-components": "^2.1.0-alpha.4"
+    "vue-banana-i18n": "^1.5.1"
   }
 }
