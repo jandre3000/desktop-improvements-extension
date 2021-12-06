@@ -16,16 +16,20 @@ function getExistingDOMNodes() {
 
 function getTocStyles() {
     const storedStyles = window.localStorage.getItem( 'tocStyles' );
+    console.log( 'stored ToC Styles', storedStyles )
     return JSON.parse( storedStyles ) || defaultTocStyles;
 };
 
 function toggleSection( level1ListItems, activeEl ) {
     const { tocExpandAll, tocExpandOnScroll } = getTocStyles();
-    [...level1ListItems].forEach( el => {
-        if ( el !== activeEl ) {
-            el.classList.remove( 'expanded' );
-        }
-    }  );
+    if (!tocExpandAll ) {
+        [...level1ListItems].forEach( el => {
+            if ( el !== activeEl ) {
+                el.classList.remove( 'expanded' );
+            }
+        }  );
+    }
+
     activeEl.classList.add( 'expanded' );
 }
 
@@ -71,13 +75,16 @@ function editTocDOM( tocEl, sidebar ) {
     // option specific styling.
     for ( let style in tocStyles ) {
         if ( !tocStyles[ style ] ) continue;
+
         if ( style === 'tocDepth' ) {
             tocEl.classList.add( `${style}-${tocStyles[ style ]}` );
-        } else if ( style === 'tocExpandAll' ) {
-            tocEl.querySelectorAll( 'li' ).forEach( li => li.classList.add( 'expanded' ))
-        } else {
-            tocEl.classList.add( style );
         }
+
+        if ( style === 'tocExpandAll' ) {
+            tocEl.querySelectorAll( '.toclevel-1' ).forEach( li => li.classList.add( 'expanded' ))
+        }
+
+        tocEl.classList.add( style );
       }
 
     for ( let level1Li of level1ListItems ) {
