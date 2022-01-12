@@ -227,16 +227,24 @@ li.expanded .toc-toggle {
 /* Display numbers
  * ---------------
  */
- .tocNumbered.toc-wrapper {
-   padding-left: 0.2em;
- }
-
  .toc-wrapper ul li {
    padding-left: 0.5em;
  }
 
+ .tocNumbered.toc-wrapper {
+  padding-left: 0.2em;
+}
+
+.tocNumbered.toc-wrapper ul li {
+  padding-left: 1em;
+}
+
 .tocNumbered.toc-wrapper ul li a {
   display: flex;
+}
+
+.tocNumbered .toc-toggle {
+  left: 2px;
 }
 
 .tocNumbered.toc-wrapper .tocnumber {

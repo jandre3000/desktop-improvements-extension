@@ -183,14 +183,20 @@ function editTocDOM( tocEl, sidebar ) {
     }
 
     function createIntroSection( tocEl ) {
+
         tocEl.lastElementChild.insertAdjacentHTML('afterbegin', `
         <li class="toclevel-1">
-            <a href="#firstHeading">
+            <a id="toc-intro" href="#firstHeading">
                 <span class="toctext">
                     Introduction
                 </span>
             </a>
         </li>`);
+
+        tocEl.querySelector('#toc-intro').addEventListener( 'click', () => {
+            window.scrollTo( 0, 0 );
+        });
+
     }
 
     // Edit default styles
