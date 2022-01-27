@@ -242,7 +242,7 @@ function editTocDOM( tocEl, sidebar ) {
 
 function addTocBodyClass() {
     if ( document.body ) {
-        document.body.classList.add( 'sidebar-toc' );
+        document.body.classList.add( 'prototype-sidebar-toc' );
     }
 }
 

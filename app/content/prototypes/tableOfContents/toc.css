@@ -2,8 +2,8 @@
   --sidebar-toc-top: 20px;
 }
 
-.sidebar-toc .mw-content-container,
-.sidebar-toc .mw-workspace-container .mw-article-toolbar-container {
+.prototype-sidebar-toc .mw-content-container,
+.prototype-sidebar-toc .mw-workspace-container .mw-article-toolbar-container {
   margin-left: 16em !important;
 }
 
